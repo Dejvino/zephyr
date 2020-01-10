@@ -1,5 +1,9 @@
 .. raw:: html
 
+   <h1>PineTime Support in Zephyr</h1>
+   <p>This branch contains enhancements to the Zephyr Project so that it supports deployment to the <a href="https://wiki.pine64.org/index.php/PineTime">PineTime</a> smart watch.</p>
+   <p>&nbsp;</p>
+
    <a href="https://www.zephyrproject.org">
      <p align="center">
        <img src="doc/images/Zephyr-Project.png">
