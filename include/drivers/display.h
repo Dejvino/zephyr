@@ -209,6 +209,22 @@ typedef int (*display_set_orientation_api)(const struct device *dev,
 					   orientation);
 
 /**
+ * @typedef display_set_scroll_offset
+ * @brief Callback API to set display scroll offset
+ */
+typedef int (*display_set_scroll_offset_api)(const struct device *dev,
+					const u16_t offset);
+
+/**
+ * @typedef display_set_scroll_region
+ * @brief Callback API to set display scroll region
+ */
+typedef int (*display_set_scroll_region_api)(const struct device *dev,
+					const u16_t fixed_top,
+					const u16_t scroll_middle,
+					const u16_t fixed_bottom);
+
+/**
  * @brief Display driver API
  * API which a display driver should expose
  */
@@ -223,6 +239,8 @@ struct display_driver_api {
 	display_get_capabilities_api get_capabilities;
 	display_set_pixel_format_api set_pixel_format;
 	display_set_orientation_api set_orientation;
+	display_set_scroll_offset_api set_scroll_offset;
+	display_set_scroll_region_api set_scroll_region;
 };
 
 /**
@@ -421,6 +439,56 @@ static inline int display_set_orientation(const struct device *dev,
 
 	return api->set_orientation(dev, orientation);
 }
+
+/**
+ * @brief Set offset to which the display should scroll to
+ *
+ * Setting a scroll offset visually shifts the content on the display
+ * without affecting the frame buffer and its addresses. The frame buffer is
+ * accessed as a circular buffer, i.e. the content will visually loop.
+ * 
+ * The 'offset' usually corresponds to a line of the display.
+ * 
+ * It is possible to select only a portion of a display that will be
+ * affected by scrolling via display_set_scroll_region()
+ *
+ * @param dev Pointer to device structure
+ * @param offset How much to scroll
+ *
+ * @retval 0 on success else negative errno code.
+ */
+static inline int display_set_scroll_offset(const struct device *dev, u16_t offset)
+{
+	struct display_driver_api *api =
+		(struct display_driver_api *)dev->driver_api;
+
+	return api->set_scroll_offset(dev, offset);
+}
+
+/**
+ * @brief Set display's scrolling region
+ *
+ * Set which portion of the display will be affected by setting a scrolling offset.
+ * The display is divided into three parts: fixed top, scrolling middle, fixed bottom.
+ * The fixed parts are not affected by scrolling, the middle part is affected by scrolling.
+ *
+ * @param dev Pointer to device structure
+ * @param fixed_top Size of the top section that is fixed and will not scroll.
+ * @param scroll_middle Size of the middle section that will scroll.
+ * @param fixed_bottom Size of the bottom section that is fixed and will not scroll.
+ *
+ * @retval 0 on success else negative errno code.
+ */
+static inline int display_set_scroll_region(const struct device *dev, u16_t fixed_top,
+						u16_t scroll_middle,
+						u16_t fixed_bottom)
+{
+	struct display_driver_api *api =
+		(struct display_driver_api *)dev->driver_api;
+
+	return api->set_scroll_region(dev, fixed_top, scroll_middle, fixed_bottom);
+}
+
 
 #ifdef __cplusplus
 }

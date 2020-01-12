@@ -256,6 +256,31 @@ static int st7789v_set_orientation(const struct device *dev,
 	return -ENOTSUP;
 }
 
+static int st7789v_set_scroll_offset(const struct device *dev, u16_t offset)
+{
+	struct st7789v_data *driver = (struct st7789v_data *)dev->driver_data;
+
+	u16_t spi_data[1];
+	spi_data[0] = sys_cpu_to_be16(offset);
+	
+	st7789v_transmit(driver, ST7789V_CMD_VSCSAD, (u8_t*)&spi_data[0], 2);
+	return 0;
+}
+
+static int st7789v_set_scroll_region(const struct device *dev, u16_t fixed_top,
+					u16_t scroll_middle, u16_t fixed_bottom)
+{
+	struct st7789v_data *driver = (struct st7789v_data *)dev->driver_data;
+
+	u16_t spi_data[3];
+	spi_data[0] = sys_cpu_to_be16(fixed_top);
+	spi_data[1] = sys_cpu_to_be16(scroll_middle);
+	spi_data[2] = sys_cpu_to_be16(fixed_bottom);
+	
+	st7789v_transmit(driver, ST7789V_CMD_VSCRDEF, (u8_t*)spi_data, 6);
+	return 0;
+}
+
 static void st7789v_lcd_init(struct st7789v_data *p_st7789v)
 {
 	u8_t tmp;
@@ -400,6 +425,8 @@ static const struct display_driver_api st7789v_api = {
 	.get_capabilities = st7789v_get_capabilities,
 	.set_pixel_format = st7789v_set_pixel_format,
 	.set_orientation = st7789v_set_orientation,
+	.set_scroll_offset = st7789v_set_scroll_offset,
+	.set_scroll_region = st7789v_set_scroll_region,
 };
 
 static struct st7789v_data st7789v_data = {

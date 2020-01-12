@@ -22,6 +22,9 @@
 #define ST7789V_CMD_RASET			0x2b
 #define ST7789V_CMD_RAMWR			0x2c
 
+#define ST7789V_CMD_VSCRDEF                     0x33
+#define ST7789V_CMD_VSCSAD                      0x37
+
 #define ST7789V_CMD_MADCTL			0x36
 #define ST7789V_MADCTL_MY_TOP_TO_BOTTOM		0x00
 #define ST7789V_MADCTL_MY_BOTTOM_TO_TOP		0x80
